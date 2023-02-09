@@ -9,7 +9,7 @@ RUN echo "pip version: $(pip3 --version)"
 ## AI requirements
 RUN pip install torch torchvision torchaudio opencv-python numpy --upgrade
 ## Debugging / displaying results
-RUN pip install matplotlib pandas tqdm
+RUN pip install matplotlib pandas tqdm imageio
 ## Extra libs for Cellpose
 RUN pip install scipy opencv-python-headless tifffile numba fastremap natsort
 
@@ -22,19 +22,7 @@ ENV CP_REPO_PATH=/root/cellpose
 ENV CP_PATH=${CP_REPO_PATH}/cellpose
 RUN git clone https://github.com/MouseLand/cellpose $CP_REPO_PATH
 RUN ln -s $CP_PATH /usr/lib/python3/dist-packages
+## Initialize the CP model so that the weights are downloaded locally.
+RUN python -c "from cellpose.models import Cellpose; cp = Cellpose()"
 
-## OFM Python programming client
-#RUN pip install openflexure-microscope-client
-
-## Convenience
-#pip install tqdm
-
-
-## Install Docker
-#touch docker_install_script.sh
-#curl -sSL https://get.docker.com > ./docker_install_script.sh
-# Ideally check that the script is OK.
-#sh docker_install_script.sh
-#sudo usermod -aG docker $(whoami)
-## Reboot the Pi, then Docker should be working.
-
+RUN mkdir /data
